@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOMOB ARK — FLIGHT DAY 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+@font-face {
+    font-family: 'PfStardust30';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/PFStardust.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'PfStardust30';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/PFStardustBold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'PfStardust30';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/PFStardustExtraBold.woff2') format('woff2');
+    font-weight: 800;
+    font-display: swap;
+}
+</style>
+<style>
+:root {
+  --void: #020408;
+  --deep: #060e1a;
+  --signal: #00d4ff;
+  --eden: #00ff88;
+  --warning: #ff6b35;
+  --critical: #ff2244;
+  --muted: #1e3a52;
+  --text: #6aa0be;
+  --bright: #a8d4ec;
+  --white: #e8f4ff;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: 'PfStardust30', 'Orbitron', monospace;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+/* SCANLINE */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background: repeating-linear-gradient(
+    0deg, transparent 0px, transparent 3px,
+    rgba(0,212,255,0.012) 3px, rgba(0,212,255,0.012) 4px
+  );
+  pointer-events:none;
+  z-index:9999;
+}
+
+#starfield { position:fixed; inset:0; z-index:0; }
+.page { position:relative; z-index:10; }
+
+/* ── HEADER ── */
+header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 48px;
+  border-bottom:1px solid rgba(0,212,255,0.1);
+  background:linear-gradient(180deg, rgba(2,4,8,0.98) 0%, transparent 100%);
+  position:sticky;
+  top:0;
+  z-index:500;
+  backdrop-filter:blur(8px);
+}
+
+.logo {
+  font-family:'Orbitron', monospace;
+  font-weight:900;
+  font-size:18px;
+  letter-spacing:0.2em;
+  color:var(--signal);
+  text-shadow:0 0 20px rgba(0,212,255,0.5);
+}
+.logo span {
+  color:var(--white);
+  opacity:0.4;
+  font-weight:400;
+  font-size:11px;
+  margin-left:16px;
+  letter-spacing:0.1em;
+}
+
+.header-right {
+  display:flex;
+  gap:32px;
+  align-items:center;
+}
+.hstat {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:2px;
+}
+.hstat-label {
+  font-size:9px;
+  letter-spacing:0.2em;
+  color:var(--text);
+  opacity:0.5;
+  text-transform:uppercase;
+}
+.hstat-val {
+  font-size:13px;
+  letter-spacing:0.05em;
+}
+.hstat-val.ark { color:var(--signal); }
+.hstat-val.eden { color:var(--eden); }
+.blink { animation:blink 1.4s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── HERO ── */
+#hero {
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:80px 48px;
+  position:relative;
+}
+
+.hero-eye {
+  font-size:10px;
+  letter-spacing:0.4em;
+  color:var(--signal);
+  opacity:0.6;
+  text-transform:uppercase;
+  margin-bottom:28px;
+}
+
+.hero-title {
+  font-family:'Orbitron', monospace;
+  font-weight:900;
+  font-size:clamp(40px, 8vw, 96px);
+  line-height:1.05;
+  letter-spacing:0.06em;
+  color:var(--white);
+  text-shadow:0 0 60px rgba(0,212,255,0.25), 0 0 120px rgba(0,212,255,0.1);
+  margin-bottom:16px;
+}
+
+.hero-sub {
+  font-family:'Orbitron', monospace;
+  font-size:clamp(12px, 1.8vw, 20px);
+  color:var(--signal);
+  letter-spacing:0.35em;
+  margin-bottom:48px;
+  opacity:0.75;
+}
+
+.hero-desc {
+  max-width:520px;
+  font-size:13px;
+  line-height:2.1;
+  color:var(--text);
+  opacity:0.8;
+  margin-bottom:60px;
+}
+
+.mission-bars {
+  display:flex;
+  gap:56px;
+  align-items:flex-start;
+  justify-content:center;
+}
+.mbar-wrap {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  min-width:200px;
+}
+.mbar-label {
+  font-size:9px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--text);
+  opacity:0.5;
+}
+.mbar-track {
+  width:100%;
+  height:3px;
+  background:rgba(255,255,255,0.05);
+  border-radius:2px;
+  overflow:hidden;
+}
+.mbar-fill {
+  height:100%;
+  border-radius:2px;
+  width:0;
+  transition:width 2.5s cubic-bezier(0.4,0,0.2,1);
+}
+.mbar-fill.ark {
+  background:linear-gradient(90deg,#0064b0,var(--signal));
+  box-shadow:0 0 8px rgba(0,212,255,0.7);
+}
+.mbar-fill.eden {
+  background:linear-gradient(90deg,#007a45,var(--eden));
+  box-shadow:0 0 8px rgba(0,255,136,0.7);
+}
+.mbar-pct {
+  font-family:'Orbitron', monospace;
+  font-size:28px;
+  font-weight:700;
+}
+.mbar-pct.ark { color:var(--signal); }
+.mbar-pct.eden { color:var(--eden); }
+
+.scroll-hint {
+  position:absolute;
+  bottom:28px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:10px;
+  letter-spacing:0.3em;
+  color:var(--text);
+  opacity:0.25;
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-6px)} }
+
+/* ── STAR MAP ── */
+#starmap {
+  min-height:100vh;
+  padding:80px 48px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.sec-header {
+  text-align:center;
+  margin-bottom:56px;
+}
+.sec-eye {
+  font-size:9px;
+  letter-spacing:0.35em;
+  color:var(--signal);
+  opacity:0.5;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.sec-title {
+  font-family:'Orbitron', monospace;
+  font-size:clamp(18px, 3vw, 30px);
+  color:var(--white);
+  letter-spacing:0.1em;
+  font-weight:700;
+}
+
+.map-container {
+  position:relative;
+  width:100%;
+  max-width:960px;
+  height:460px;
+}
+
+.orbit-line {
+  position:absolute;
+  border:1px dashed rgba(0,212,255,0.07);
+  border-radius:50%;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+
+/* ARK 이동 경로 */
+.travel-path {
+  position:absolute;
+  top:50%;
+  left:8%;
+  width:84%;
+  height:1px;
+  background:linear-gradient(90deg,
+    transparent 0%,
+    rgba(0,212,255,0.1) 15%,
+    rgba(0,212,255,0.35) 32%,
+    transparent 55%
+  );
+  pointer-events:none;
+}
+.travel-path::after {
+  content:'';
+  position:absolute;
+  top:-2px;
+  left:28%;
+  width:10px;
+  height:5px;
+  background:var(--signal);
+  box-shadow:0 0 10px var(--signal), 0 0 20px rgba(0,212,255,0.4);
+  clip-path:polygon(0 50%,100% 0,100% 100%);
+  animation:ark-drift 9s linear infinite;
+}
+@keyframes ark-drift {
+  0%   { left:28%; opacity:1; }
+  65%  { opacity:1; }
+  100% { left:70%; opacity:0; }
+}
+
+/* PLANET */
+.planet-wrap {
+  position:absolute;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+  transform:translate(-50%,-50%);
+  z-index:10;
+}
+.planet {
+  position:relative;
+  border-radius:50%;
+  transition:transform 0.3s ease, filter 0.3s ease;
+  flex-shrink:0;
+}
+.planet-wrap:hover .planet {
+  transform:scale(1.18);
+  filter:brightness(1.35);
+}
+.planet-label {
+  font-size:9px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--text);
+  opacity:0.5;
+  white-space:nowrap;
+  transition:opacity 0.3s, color 0.3s;
+}
+.planet-wrap:hover .planet-label { opacity:1; color:var(--white); }
+
+/* 스캔 링 */
+.scan-ring {
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  border:1px solid rgba(0,212,255,0.4);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s;
+}
+.planet-wrap:hover .scan-ring {
+  opacity:1;
+  animation:scan 1.8s linear infinite;
+}
+@keyframes scan {
+  0%   { transform:translate(-50%,-50%) rotate(0deg) scale(1); opacity:0.9; }
+  100% { transform:translate(-50%,-50%) rotate(360deg) scale(1.4); opacity:0; }
+}
+
+/* 태양 */
+.p-sun {
+  width:80px; height:80px;
+  background:radial-gradient(circle at 38% 32%, #fff8e0 0%, #ffd040 20%, #ff8800 50%, #cc4400 78%, #661100 100%);
+  box-shadow:0 0 0 2px rgba(255,160,0,0.2), 0 0 40px rgba(255,140,0,0.5), 0 0 80px rgba(255,100,0,0.2);
+  animation:sun-pulse 5s ease-in-out infinite;
+}
+@keyframes sun-pulse {
+  0%,100%{ box-shadow:0 0 0 2px rgba(255,160,0,0.2),0 0 40px rgba(255,140,0,0.4),0 0 80px rgba(255,100,0,0.15); }
+  50%    { box-shadow:0 0 0 2px rgba(255,160,0,0.3),0 0 60px rgba(255,140,0,0.6),0 0 120px rgba(255,100,0,0.25); }
+}
+
+/* 지구 */
+.p-earth {
+  width:64px; height:64px;
+  background:radial-gradient(circle at 35% 35%, #1a7a4a 0%, #0d5533 28%, #0a3d6b 55%, #062840 80%, #030f1a 100%);
+  box-shadow:0 0 0 1px rgba(0,150,255,0.2), 0 0 20px rgba(0,100,200,0.3), inset 0 0 16px rgba(0,0,0,0.5);
+}
+
+/* 목적지 */
+.p-dest {
+  width:52px; height:52px;
+  background:radial-gradient(circle at 38% 30%, #9b5ce8 0%, #5c2d8f 35%, #2d1a5c 65%, #0d0820 100%);
+  box-shadow:0 0 0 1px rgba(180,100,255,0.3), 0 0 24px rgba(140,60,220,0.45), inset 0 0 16px rgba(0,0,0,0.6);
+}
+
+/* ARK 함선 */
+.ark-ship {
+  position:absolute;
+  left:30%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  z-index:20;
+  pointer-events:none;
+}
+.ark-body {
+  width:28px; height:12px;
+  background:linear-gradient(90deg, var(--signal), rgba(0,212,255,0.3));
+  clip-path:polygon(0% 50%,15% 0%,85% 0%,100% 50%,85% 100%,15% 100%);
+  box-shadow:0 0 14px rgba(0,212,255,0.9);
+  animation:ship-hover 5s ease-in-out infinite;
+}
+@keyframes ship-hover { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+.ark-body::after {
+  content:'';
+  position:absolute;
+  right:-18px; top:50%;
+  transform:translateY(-50%);
+  width:18px; height:2px;
+  background:linear-gradient(90deg, rgba(0,212,255,0.6), transparent);
+}
+.ark-tag {
+  font-size:8px;
+  letter-spacing:0.18em;
+  color:var(--signal);
+  text-align:center;
+  margin-top:5px;
+  white-space:nowrap;
+}
+
+/* TOOLTIP */
+#tt {
+  position:fixed;
+  width:300px;
+  background:rgba(2,8,18,0.96);
+  border:1px solid rgba(0,212,255,0.2);
+  padding:20px 22px;
+  pointer-events:none;
+  opacity:0;
+  transform:translateY(6px);
+  transition:opacity 0.2s ease, transform 0.2s ease;
+  z-index:800;
+  backdrop-filter:blur(16px);
+}
+#tt.show { opacity:1; transform:translateY(0); }
+#tt::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:2px;
+  background:linear-gradient(90deg, var(--signal), transparent);
+}
+.tt-eye { font-size:8px; letter-spacing:0.28em; color:var(--signal); opacity:0.6; margin-bottom:5px; text-transform:uppercase; }
+.tt-title { font-family:'Orbitron', monospace; font-size:15px; color:var(--white); font-weight:700; margin-bottom:12px; }
+.tt-body { font-size:11px; line-height:1.9; color:var(--bright); opacity:0.8; }
+.tt-stat {
+  display:flex; justify-content:space-between;
+  margin-top:14px; padding-top:14px;
+  border-top:1px solid rgba(0,212,255,0.08);
+  font-size:10px;
+}
+.tt-key { color:var(--text); opacity:0.55; }
+.tt-val { }
+.tt-val.c-ark  { color:var(--signal); }
+.tt-val.c-eden { color:var(--eden); }
+.tt-val.c-warn { color:var(--warning); }
+
+/* ── CREW ── */
+#crew {
+  padding:80px 48px;
+  max-width:1160px;
+  margin:0 auto;
+}
+
+.crew-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));
+  gap:14px;
+}
+
+
+/* ── CREW CARD STACK ── */
+#crew { padding: 60px 0 80px; }
+#crew .sec-header { padding: 0 clamp(24px,6vw,80px) 40px; }
+
+.sdot { width:5px; height:5px; border-radius:50%; flex-shrink:0; display:inline-block; }
+.sdot.active   { background:var(--eden);   box-shadow:0 0 5px var(--eden);   animation:pdot 2s infinite; }
+.sdot.standby  { background:var(--warning);box-shadow:0 0 5px var(--warning);}
+.sdot.briefing { background:var(--signal); box-shadow:0 0 5px var(--signal); animation:pdot 1.4s infinite; }
+@keyframes pdot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.cgs-outer {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 clamp(24px,6vw,80px) 24px;
+  padding-right: calc(clamp(24px,6vw,80px) + 24px);
+  cursor: pointer;
+}
+.cgs-stack { position: relative; min-height: 270px; }
+
+.cgs-card {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(0,212,255,0.1);
+  background: rgba(4,10,20,0.85);
+  transition: transform 0.5s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.5s ease, border-color 0.4s;
+}
+
+.cgs-card[data-pos="0"] {
+  transform: translate(0,0); z-index:7; opacity:1;
+  border-color: rgba(0,212,255,0.28);
+  background: rgba(4,14,28,0.97);
+}
+.cgs-card[data-pos="0"]::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,var(--signal),transparent 60%);
+}
+.cgs-card[data-pos="0"]::after {
+  content:''; position:absolute; bottom:0; right:0;
+  width:40px; height:40px;
+  border-right:1px solid rgba(0,212,255,0.15);
+  border-bottom:1px solid rgba(0,212,255,0.15);
+}
+.cgs-card[data-pos="1"] {
+  transform: translate(8px,8px); z-index:6; opacity:1;
+  border-color: rgba(0,212,255,0.12);
+  background: rgba(4,11,22,0.88);
+}
+.cgs-card[data-pos="2"] {
+  transform: translate(16px,16px); z-index:5; opacity:1;
+  border-color: rgba(0,212,255,0.08);
+  background: rgba(4,9,18,0.78);
+}
+.cgs-card[data-pos="3"] {
+  transform: translate(22px,22px); z-index:4; opacity:0.5;
+  border-color: rgba(0,212,255,0.05);
+  background: rgba(4,8,16,0.65);
+}
+.cgs-card[data-pos="4"],.cgs-card[data-pos="5"],
+.cgs-card[data-pos="6"],.cgs-card[data-pos="7"] {
+  transform: translate(22px,22px); z-index:3; opacity:0; pointer-events:none;
+}
+
+.cgs-card.fly-out {
+  transform: translateX(-115%) translateY(-10px) !important;
+  opacity: 0 !important;
+  transition: transform 0.42s cubic-bezier(0.55,0,0.9,1), opacity 0.38s ease !important;
+  z-index:10 !important; pointer-events:none;
+}
+
+.cgs-front-content {
+  position: absolute; inset: 0; z-index:9;
+  padding: 32px 36px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.cgs-front-content.fading { opacity:0; }
+
+.cgs-f-top { flex:1; }
+.cgs-f-eye  { font-size:9px; letter-spacing:0.28em; color:var(--signal); opacity:0.55; text-transform:uppercase; margin-bottom:8px; }
+.cgs-f-name { font-family:'Orbitron',monospace; font-size:26px; font-weight:900; color:var(--white); letter-spacing:0.06em; margin-bottom:4px; line-height:1.1; }
+.cgs-f-role { font-size:11px; color:var(--text); opacity:0.6; letter-spacing:0.04em; margin-bottom:20px; }
+.cgs-f-div  { height:1px; background:rgba(0,212,255,0.08); margin-bottom:18px; }
+.cgs-f-quote{ font-size:13px; line-height:2; color:var(--bright); font-style:italic; min-height:52px; }
+.cgs-f-cursor{ display:inline-block; width:7px; height:13px; background:var(--signal); margin-left:2px; animation:pdot 0.8s step-end infinite; vertical-align:middle; }
+.cgs-f-from { font-size:9px; letter-spacing:0.18em; color:var(--signal); opacity:0.45; margin-top:12px; }
+
+.cgs-f-foot { display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(0,212,255,0.07); padding-top:14px; }
+.cgs-f-status{ display:flex; align-items:center; gap:6px; font-size:9px; letter-spacing:0.12em; }
+.cgs-f-idx  { font-family:'Orbitron',monospace; font-size:10px; color:var(--signal); opacity:0.4; }
+.cgs-f-total{ opacity:0.5; }
+
+@media(max-width:768px){
+  .cgs-outer { padding:0 20px 20px; padding-right:44px; }
+  .cgs-front-content{ padding:24px; }
+  .cgs-f-name{ font-size:20px; }
+  .cgs-stack { min-height:230px; }
+}
+
+/* ── MISSION LOG ── */
+#log {
+  padding:80px 48px;
+  max-width:1160px;
+  margin:0 auto;
+}
+
+.log-grid { display:grid; grid-template-columns:1fr 1fr; gap:28px; }
+
+.log-panel {
+  border:1px solid rgba(0,212,255,0.1);
+  padding:28px;
+  background:rgba(6,14,26,0.65);
+  position:relative;
+}
+.log-panel::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:2px;
+}
+.lp-ark::before  { background:linear-gradient(90deg, var(--signal), transparent); }
+.lp-eden::before { background:linear-gradient(90deg, var(--eden),   transparent); }
+
+.lp-title {
+  font-family:'Orbitron', monospace;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:0.15em;
+  margin-bottom:5px;
+}
+.lp-ark  .lp-title { color:var(--signal); }
+.lp-eden .lp-title { color:var(--eden); }
+.lp-sub { font-size:10px; color:var(--text); opacity:0.45; margin-bottom:22px; letter-spacing:0.05em; }
+
+.lp-prog-label {
+  display:flex; justify-content:space-between;
+  font-size:9px; color:var(--text); opacity:0.5;
+  margin-bottom:6px; letter-spacing:0.1em;
+}
+.lp-track { height:5px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; margin-bottom:22px; }
+.lp-fill {
+  height:100%; border-radius:3px;
+  width:0;
+  transition:width 2.5s cubic-bezier(0.4,0,0.2,1) 0.4s;
+}
+.lp-ark  .lp-fill { background:linear-gradient(90deg,#0064b0,var(--signal)); box-shadow:0 0 8px rgba(0,212,255,0.5); }
+.lp-eden .lp-fill { background:linear-gradient(90deg,#007a40,var(--eden));   box-shadow:0 0 8px rgba(0,255,136,0.5); }
+
+.log-entries { display:flex; flex-direction:column; gap:0; }
+.log-entry {
+  display:grid; grid-template-columns:110px 1fr; gap:10px;
+  font-size:10px; padding:9px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  opacity:0; transform:translateX(-6px);
+  transition:opacity 0.4s ease, transform 0.4s ease;
+}
+.log-entry.in { opacity:1; transform:translateX(0); }
+.log-time { color:var(--text); opacity:0.35; font-size:9px; letter-spacing:0.04em; padding-top:1px; }
+.log-msg  { color:var(--bright); line-height:1.65; opacity:0.8; }
+
+/* ── TRANSMISSION ── */
+#transmission {
+  padding:100px 48px;
+  text-align:center;
+  border-top:1px solid rgba(0,212,255,0.07);
+  position:relative;
+  overflow:hidden;
+}
+#transmission::before {
+  content:'';
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:600px; height:600px;
+  background:radial-gradient(circle, rgba(0,212,255,0.03) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+.tr-label { font-size:9px; letter-spacing:0.38em; color:var(--signal); opacity:0.45; text-transform:uppercase; margin-bottom:28px; }
+.tr-text {
+  font-family:'PfStardust30', 'Orbitron', sans-serif;
+  font-size:clamp(18px, 2.5vw, 28px);
+  font-weight:300;
+  line-height:1.95;
+  color:var(--bright);
+  max-width:580px;
+  margin:0 auto 40px;
+  opacity:0.88;
+  min-height:96px;
+}
+.tr-from { font-size:10px; letter-spacing:0.2em; color:var(--text); opacity:0.38; }
+
+footer {
+  padding:20px 48px;
+  border-top:1px solid rgba(0,212,255,0.05);
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:9px; letter-spacing:0.15em;
+  color:var(--text); opacity:0.35;
+}
+
+/* INTRO */
+#intro {
+  position:fixed; inset:0;
+  background:var(--void);
+  z-index:9000;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:14px;
+  transition:opacity 0.8s ease;
+}
+#intro.out { opacity:0; pointer-events:none; }
+.intro-line { font-family:'Orbitron', monospace; font-size:12px; letter-spacing:0.3em; color:var(--signal); min-height:18px; }
+.intro-bar  { width:200px; height:2px; background:rgba(0,212,255,0.08); border-radius:1px; overflow:hidden; }
+.intro-fill { height:100%; background:var(--signal); box-shadow:0 0 8px var(--signal); width:0; animation:iload 2.8s ease forwards 0.4s; }
+@keyframes iload { 0%{width:0} 100%{width:100%} }
+
+/* REVEAL */
+[data-rev] {
+  opacity:0; transform:translateY(18px);
+  transition:opacity 0.65s ease, transform 0.65s ease;
+}
+[data-rev].in { opacity:1; transform:none; }
+
+/* 반응형 */
+@media(max-width:768px) {
+  header { padding:14px 20px; }
+  #hero,#starmap,#crew,#log,#transmission { padding:56px 20px; }
+  .hero-title { font-size:36px; }
+  .mission-bars { flex-direction:column; gap:20px; align-items:stretch; }
+  .map-container { height:320px; }
+  .log-grid { grid-template-columns:1fr; }
+  .crew-grid { grid-template-columns:1fr 1fr; }
+  footer { flex-direction:column; gap:6px; text-align:center; }
+  .header-right .hstat:last-child { display:none; }
+}
+@media(max-width:480px) {
+  .crew-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="intro-line" id="intro-line"></div>
+  <div class="intro-bar"><div class="intro-fill"></div></div>
+</div>
+
+<!-- STARFIELD -->
+<canvas id="starfield"></canvas>
+
+<!-- TOOLTIP -->
+<div id="tt">
+  <div class="tt-eye"  id="tt-eye"></div>
+  <div class="tt-title" id="tt-title"></div>
+  <div class="tt-body"  id="tt-body"></div>
+  <div class="tt-stat">
+    <span class="tt-key" id="tt-key"></span>
+    <span class="tt-val" id="tt-val"></span>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- HEADER -->
+<header>
+  <div class="logo">TOMOB ARK <span>// MISSION CONTROL</span></div>
+  <div class="header-right">
+    <div class="hstat">
+      <span class="hstat-label">ARK 자급률</span>
+      <span class="hstat-val ark">23.0%</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-label">EDEN 복구율</span>
+      <span class="hstat-val eden">0.0%</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-label">FLIGHT</span>
+      <span class="hstat-val ark">DAY <span id="day-counter">1</span> <span class="blink">▮</span></span>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-eye"   data-rev>TOMOB ARK — CLASSIFIED MISSION BRIEF</div>
+  <h1 class="hero-title"  data-rev>VERTICAL<br>FARM<br>CRAFTER</h1>
+  <div class="hero-sub"   data-rev>FLIGHT DAY <span id="day-counter-hero">1</span> · MISSION ACTIVE</div>
+  <p class="hero-desc"    data-rev>
+    첫 번째 씨앗이 썩었을 때<br>
+    우리는 아무도 몰랐다.<br>
+    마지막 씨앗이 남았을 때<br>
+    우리는 비로소 떠났다.<br><br>
+    신호는 우리가 보낸 게 아니었다.<br>
+    그래도 우리는 응답해야 했다.
+  </p>
+  <div class="mission-bars" data-rev>
+    <div class="mbar-wrap">
+      <div class="mbar-label">ARK MISSION — 식량 자급률</div>
+      <div class="mbar-track"><div class="mbar-fill ark" id="bar-ark"></div></div>
+      <div class="mbar-pct ark">23%</div>
+    </div>
+    <div class="mbar-wrap">
+      <div class="mbar-label">EDEN PROJECT — 지구 복구율</div>
+      <div class="mbar-track"><div class="mbar-fill eden" id="bar-eden"></div></div>
+      <div class="mbar-pct eden">0%</div>
+    </div>
+  </div>
+  <div class="scroll-hint">SCROLL TO NAVIGATE ↓</div>
+</section>
+
+<!-- STAR MAP -->
+<section id="starmap">
+  <div class="sec-header" data-rev>
+    <div class="sec-eye">NAVIGATION — SECTOR MAP</div>
+    <h2 class="sec-title">현재 항로 현황</h2>
+  </div>
+
+  <div class="map-container" data-rev>
+    <!-- 궤도선 -->
+    <div class="orbit-line" style="width:160px;height:160px;"></div>
+    <div class="orbit-line" style="width:300px;height:300px;"></div>
+    <div class="orbit-line" style="width:460px;height:460px;"></div>
+
+    <!-- 이동 경로 -->
+    <div class="travel-path"></div>
+
+    <!-- 태양 -->
+    <div class="planet-wrap" style="left:11%;top:50%;"
+      data-eye="ORIGIN STAR — SOL"
+      data-title="태양계"
+      data-body="지구가 속한 항성계. 2045년 붕괴 이후 TOMOB ARK가 이탈 중. 귀환 가능성 미정."
+      data-key="이탈 경과" data-val="FLIGHT DAY 1" data-vc="">
+      <div class="planet p-sun">
+        <div class="scan-ring" style="width:108px;height:108px;border-color:rgba(255,160,0,0.5);"></div>
+      </div>
+      <span class="planet-label">SOL</span>
+    </div>
+
+    <!-- 지구 -->
+    <div class="planet-wrap" style="left:34%;top:37%;"
+      data-eye="EDEN PROJECT — EARTH"
+      data-title="지구 — 복구 대상"
+      data-body="EDEN PROJECT 진행 중. RALPH의 코드가 원격 전송되어 자동화 시스템을 복구한다. 현재 복구율 0%."
+      data-key="복구율" data-val="0.0%" data-vc="c-eden">
+      <div class="planet p-earth">
+        <div class="scan-ring" style="width:88px;height:88px;border-color:rgba(0,255,136,0.5);"></div>
+      </div>
+      <span class="planet-label">EARTH</span>
+    </div>
+
+    <!-- ARK 함선 -->
+    <div class="ark-ship">
+      <div class="ark-body"></div>
+      <div class="ark-tag">TOMOB ARK ▶</div>
+    </div>
+
+    <!-- 목적지 -->
+    <div class="planet-wrap" style="left:84%;top:46%;"
+      data-eye="DESTINATION — CLASSIFIED"
+      data-title="목적지 행성계"
+      data-body="좌표 기밀. 수직 농장 가능 환경이 탐지된 행성계. 항해 중 식량 자급률 100% 달성 필수."
+      data-key="도착 예정" data-val="UNKNOWN" data-vc="c-warn">
+      <div class="planet p-dest">
+        <div class="scan-ring" style="width:76px;height:76px;border-color:rgba(180,100,255,0.6);"></div>
+      </div>
+      <span class="planet-label">DESTINATION</span>
+    </div>
+  </div>
+</section>
+
+<!-- CREW -->
+<section id="crew">
+  <div class="sec-header" data-rev>
+    <div class="sec-eye">CREW — ACTIVE PERSONNEL</div>
+    <h2 class="sec-title">승무원 현황</h2>
+  </div>
+
+  <div class="cgs-outer" data-rev>
+    <div class="cgs-stack" id="cgs-stack">
+      <div class="cgs-card" data-name="앤" data-team="총사령관" data-role="TOMOB ARK 함장 · 전체 지휘" data-quote="RALPH. 다음 임무 브리핑한다. 집중해." data-from="앤 · 함장" data-status="briefing" data-stext="COMMANDING" data-scolor="var(--signal)"></div>
+      <div class="cgs-card" data-name="에이미" data-team="에이미 팀" data-role="수석 엔지니어링 교관 · RALPH 교육" data-quote="구조 먼저 이해해. 코드는 그 다음이야. 모르는 부분 있으면 말해." data-from="에이미 · 수석 교관" data-status="active" data-stext="TRAINING RALPH" data-scolor="var(--eden)"></div>
+      <div class="cgs-card" data-name="포지" data-team="에이미 팀" data-role="실습 코치 · 직접 짜보기 담당" data-quote="지금 배운 거 직접 쳐봐. 틀려도 괜찮아. 일단 써봐." data-from="포지 · 실습 코치" data-status="active" data-stext="ON DECK" data-scolor="var(--eden)"></div>
+      <div class="cgs-card" data-name="렌즈" data-team="에이미 팀" data-role="S-CHECK 담당 · 코드 검수관" data-quote="...이번엔 빈틈이 없네. 통과. 다음엔 더 어려울 거야." data-from="렌즈 · 검수관" data-status="standby" data-stext="STANDBY" data-scolor="var(--warning)"></div>
+      <div class="cgs-card" data-name="에코" data-team="시온 팀" data-role="생태 시스템 분석가 · EDEN 연결" data-quote="ARK 3구역 상추는 26도 넘으면 죽어요. EDEN도 마찬가지예요." data-from="에코 · 분석가" data-status="active" data-stext="MONITORING" data-scolor="var(--eden)"></div>
+      <div class="cgs-card" data-name="시온" data-team="시온 팀" data-role="항법 전략관 · 티어 브리핑" data-quote="Tier 1 완료하면 ARK 식량 자급률 12% 올라간다. 시작하자." data-from="시온 · 전략관" data-status="briefing" data-stext="BRIEFING" data-scolor="var(--signal)"></div>
+      <div class="cgs-card" data-name="리아" data-team="시온 팀" data-role="자동화 설계 고문 · Tier 4 담당" data-quote="자동화는 루프가 아니야. 데이터 수집 → 판단 → 명령 → 피드백." data-from="리아 · 자동화 고문" data-status="standby" data-stext="TIER 4 STANDBY" data-scolor="var(--warning)"></div>
+      <div class="cgs-card" data-name="리라" data-team="프레이 팀" data-role="감성 앵커 · 생존자 커뮤니케이션" data-quote="오늘 3구역에서 새싹 났어. 느려도 괜찮아. 멈추지만 마." data-from="리라 · 감성 앵커" data-status="active" data-stext="TRANSMITTING" data-scolor="var(--eden)"></div>
+
+      <div class="cgs-front-content" id="cgs-front">
+        <div class="cgs-f-top">
+          <div class="cgs-f-eye"  id="cgs-f-eye"></div>
+          <div class="cgs-f-name" id="cgs-f-name"></div>
+          <div class="cgs-f-role" id="cgs-f-role"></div>
+          <div class="cgs-f-div"></div>
+          <div class="cgs-f-quote" id="cgs-f-quote"></div>
+          <div class="cgs-f-from"  id="cgs-f-from"></div>
+        </div>
+        <div class="cgs-f-foot">
+          <div class="cgs-f-status">
+            <span class="sdot" id="cgs-f-sdot"></span>
+            <span id="cgs-f-stext"></span>
+          </div>
+          <div class="cgs-f-idx"><span id="cgs-f-cur">01</span><span class="cgs-f-total"> / 08</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- MISSION LOG -->
+<section id="log">
+  <div class="sec-header" data-rev>
+    <div class="sec-eye">MISSION LOG — REAL-TIME</div>
+    <h2 class="sec-title">임무 진행 현황</h2>
+  </div>
+
+  <div class="log-grid">
+
+    <div class="log-panel lp-ark" data-rev>
+      <div class="lp-title">ARK MISSION</div>
+      <div class="lp-sub">수직 농장 시스템 복구 · 식량 자급률 목표 100%</div>
+      <div class="lp-prog-label"><span>CURRENT</span><span style="color:var(--signal)">23%</span></div>
+      <div class="lp-track"><div class="lp-fill" data-w="23"></div></div>
+      <div class="log-entries">
+        <div class="log-entry"><span class="log-time">DAY 1 · 00:01</span><span class="log-msg">ARK 수직 농장 시스템 부팅 시작. RALPH 탑승 확인.</span></div>
+        <div class="log-entry"><span class="log-time">DAY 1 · 00:14</span><span class="log-msg">에이미, Tier 1 학습 시퀀스 초기화 완료.</span></div>
+        <div class="log-entry"><span class="log-time">DAY 1 · 00:31</span><span class="log-msg">3구역 온도 센서 오프라인. 가상 데이터 서브루틴 복구 필요.</span></div>
+        <div class="log-entry"><span class="log-time">진행 중</span><span class="log-msg" style="color:var(--signal)">RALPH — TIER 1 QUEST 1 진행 중.</span></div>
+      </div>
+    </div>
+
+    <div class="log-panel lp-eden" data-rev>
+      <div class="lp-title">EDEN PROJECT</div>
+      <div class="lp-sub">지구 자동화 시스템 원격 복구 · 생태계 재건</div>
+      <div class="lp-prog-label"><span>CURRENT</span><span style="color:var(--eden)">0%</span></div>
+      <div class="lp-track"><div class="lp-fill" data-w="0"></div></div>
+      <div class="log-entries">
+        <div class="log-entry"><span class="log-time">DAY 1 · 00:00</span><span class="log-msg">EDEN 원격 채널 개통 시도. 응답 없음.</span></div>
+        <div class="log-entry"><span class="log-time">DAY 1 · 00:08</span><span class="log-msg">지구 자동화 시스템 전면 셧다운 상태 확인.</span></div>
+        <div class="log-entry"><span class="log-time">DAY 1 · 00:22</span><span class="log-msg">에코, 지구 생태계 임계점 분석 중. 결과 대기.</span></div>
+        <div class="log-entry"><span class="log-time">대기 중</span><span class="log-msg" style="color:var(--warning)">RALPH Tier 2 완료 후 첫 전송 예정.</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TRANSMISSION -->
+<section id="transmission">
+  <div class="tr-label" data-rev>LAST TRANSMISSION — LIRA · EMOTIONAL ANCHOR</div>
+  <div class="tr-text" id="tr-text" data-rev></div>
+  <div class="tr-from" data-rev>리라 · TOMOB ARK · FLIGHT DAY 1</div>
+</section>
+
+<footer>
+  <span>TOMOB ARK © 2047 · FLIGHT DAY <span id="day-counter-footer">1</span></span>
+  <span>RALPH — SYSTEM ENGINEER IN TRAINING</span>
+  <span>tomob · AI 속도 + 인간 감성</span>
+</footer>
+
+</div>
+
+<script>
+/* ── STARFIELD ── */
+(()=>{
+  const c=document.getElementById('starfield');
+  const ctx=c.getContext('2d');
+  let stars=[],W,H;
+  function resize(){ W=c.width=innerWidth; H=c.height=innerHeight; }
+  function init(){
+    stars=[];
+    for(let i=0;i<260;i++) stars.push({
+      x:Math.random()*W, y:Math.random()*H,
+      r:Math.random()*1.3+0.2,
+      a:Math.random(),
+      t:Math.random()*Math.PI*2,
+      s:Math.random()*0.004+0.001
+    });
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{
+      s.t+=s.s;
+      const a=s.a*(0.45+0.55*Math.sin(s.t));
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(180,220,255,${a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  resize(); init(); draw();
+  addEventListener('resize',()=>{ resize(); init(); });
+})();
+
+/* ── INTRO ── */
+(()=>{
+  const line=document.getElementById('intro-line');
+  const intro=document.getElementById('intro');
+  const msgs=['TOMOB ARK — INITIATING...','CREW SYSTEMS ONLINE','MISSION LOADED','FLIGHT DAY 1'];
+  let li=0,ci=0;
+  function type(){
+    if(ci<msgs[li].length){
+      line.textContent+=msgs[li][ci++];
+      setTimeout(type,40);
+    } else {
+      setTimeout(()=>{
+        ci=0; li++; line.textContent='';
+        if(li<msgs.length) setTimeout(type,180);
+        else {
+          setTimeout(()=>{
+            intro.classList.add('out');
+            setTimeout(()=>intro.remove(),900);
+            document.getElementById('bar-ark').style.width='23%';
+            document.getElementById('bar-eden').style.width='0%';
+          },300);
+        }
+      },420);
+    }
+  }
+  setTimeout(type,500);
+})();
+
+/* ── TOOLTIP ── */
+(()=>{
+  const tt=document.getElementById('tt');
+  document.querySelectorAll('.planet-wrap[data-eye]').forEach(p=>{
+    p.addEventListener('mouseenter',function(){
+      document.getElementById('tt-eye').textContent=this.dataset.eye;
+      document.getElementById('tt-title').textContent=this.dataset.title;
+      document.getElementById('tt-body').textContent=this.dataset.body;
+      document.getElementById('tt-key').textContent=this.dataset.key;
+      const v=document.getElementById('tt-val');
+      v.textContent=this.dataset.val;
+      v.className='tt-val '+(this.dataset.vc||'c-ark');
+      tt.classList.add('show');
+    });
+    p.addEventListener('mousemove',e=>{
+      const tw=300,th=160;
+      const l=e.clientX+20+tw>innerWidth ? e.clientX-tw-20 : e.clientX+20;
+      const t=e.clientY+20+th>innerHeight ? e.clientY-th-20 : e.clientY+20;
+      tt.style.cssText+=`;left:${l}px;top:${t}px`;
+    });
+    p.addEventListener('mouseleave',()=>tt.classList.remove('show'));
+  });
+})();
+
+/* ── SCROLL REVEAL ── */
+(()=>{
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting) return;
+      e.target.classList.add('in');
+      e.target.querySelectorAll('.lp-fill[data-w]').forEach(f=>{
+        setTimeout(()=>f.style.width=f.dataset.w+'%',300);
+      });
+      e.target.querySelectorAll('.log-entry').forEach((el,i)=>{
+        setTimeout(()=>el.classList.add('in'),150+i*110);
+      });
+    });
+  },{threshold:0.1,rootMargin:'0px 0px -36px 0px'});
+
+  document.querySelectorAll('[data-rev]').forEach(el=>io.observe(el));
+})();
+
+/* ── TRANSMISSION TYPING ── */
+(()=>{
+  const el=document.getElementById('tr-text');
+  const txt='우리가 떠난 자리에\n우리가 심지 않은 것이 자라고 있다.\n\n3구역. 오늘 새싹이 났어.\n네가 고친 온도 센서 덕분이야.\n\n느려도 괜찮아.\n그가 돌아오는 날 — 땅이 살아있으면 된다.';
+  let done=false;
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting&&!done){
+        done=true;
+        let i=0;
+        function go(){
+          if(i>=txt.length) return;
+          if(txt[i]==='\n'){
+            el.innerHTML+='<br>';
+          } else {
+            el.textContent+=txt[i];
+            el.innerHTML=el.innerHTML.replace(/\n/g,'<br>');
+          }
+          i++;
+          setTimeout(go, txt[i-1]==='\n'?380:52);
+        }
+        setTimeout(go,500);
+      }
+    });
+  },{threshold:0.3});
+  io.observe(el);
+})();
+
+/* ── FLIGHT DAY COUNTER ── */
+(()=>{
+  const origin = new Date('2025-02-25T00:00:00');
+  const today  = new Date();
+  today.setHours(0,0,0,0);
+  const diff = Math.floor((today - origin) / 86400000) + 1;
+  const day  = Math.max(1, diff);
+  document.querySelectorAll('[id^="day-counter"]').forEach(el => el.textContent = day);
+})();
+
+/* ── CREW CARD STACK ── */
+(()=>{
+  const cards   = Array.from(document.querySelectorAll('.cgs-card'));
+  const stack   = document.getElementById('cgs-stack');
+  const front   = document.getElementById('cgs-front');
+  const total   = cards.length;
+  let current   = 0;
+  let autoTimer = null;
+  let typeTimer = null;
+  let animating = false;
+
+  function setPos() {
+    cards.forEach((card, i) => {
+      card.dataset.pos = (i - current + total) % total;
+    });
+  }
+
+  function fill() {
+    if (typeTimer) clearTimeout(typeTimer);
+    const d = cards[current].dataset;
+    front.classList.add('fading');
+    setTimeout(() => {
+      document.getElementById('cgs-f-eye').textContent  = d.team.toUpperCase() + ' — CREW BRIEF';
+      document.getElementById('cgs-f-name').textContent = d.name;
+      document.getElementById('cgs-f-role').textContent = d.role;
+      document.getElementById('cgs-f-from').textContent = '— ' + d.from;
+      document.getElementById('cgs-f-cur').textContent  = String(current+1).padStart(2,'0');
+      const sdot = document.getElementById('cgs-f-sdot');
+      sdot.className = 'sdot ' + d.status;
+      const st = document.getElementById('cgs-f-stext');
+      st.textContent = d.stext; st.style.color = d.scolor;
+      front.classList.remove('fading');
+      const qEl = document.getElementById('cgs-f-quote');
+      const full = '"' + d.quote + '"';
+      qEl.innerHTML = '<span class="cgs-f-cursor"></span>';
+      let i = 0;
+      function t() {
+        qEl.textContent = full.slice(0,i);
+        const cur = document.createElement('span');
+        cur.className = 'cgs-f-cursor';
+        qEl.appendChild(cur);
+        if (i < full.length) { i++; typeTimer = setTimeout(t, 32); }
+      }
+      t();
+    }, 200);
+  }
+
+  function next() {
+    if (animating) return;
+    animating = true;
+    const flyCard = cards.find(c => c.dataset.pos === '0');
+    if (flyCard) {
+      flyCard.classList.add('fly-out');
+      setTimeout(() => flyCard.classList.remove('fly-out'), 460);
+    }
+    current = (current + 1) % total;
+    setPos();
+    fill();
+    setTimeout(() => { animating = false; }, 480);
+  }
+
+  function startAuto() { clearInterval(autoTimer); autoTimer = setInterval(next, 4500); }
+
+  setPos(); fill();
+  startAuto();
+  stack.addEventListener('click', () => { next(); startAuto(); });
+  new IntersectionObserver(entries => {
+    entries.forEach(e => { if (!e.isIntersecting) clearInterval(autoTimer); else startAuto(); });
+  }, { threshold: 0.2 }).observe(document.getElementById('crew'));
+})();
+</script>
+</body>
+</html>
